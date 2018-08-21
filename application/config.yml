@@ -2,9 +2,9 @@ app-name: # ex: roster
 initials: # your initials
 language: gradle
 
-github-app-repo-uri: # https github url of your app source  https://github.com/spgreenberg/roster.git
+github-app-repo-uri: # git@github.com:spgreenberg/roster.git
 
-github-pipelines-repo-uri: # https url of your training-pipelines fork.  ex: https://github.com/spgreenberg/training-pipelines.git
+github-pipelines-repo-uri: # ssh url of your training-pipelines fork.  ex: git@github.com:spgreenberg/training-pipelines.git
 
 cf-dev-api: # set to cf api endpoint
 cf-dev-org: # set to your org
