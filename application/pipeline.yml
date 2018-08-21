@@ -46,7 +46,7 @@ jobs:
       trigger: true
     - get: pipelines
   - task: unit-test
-    file: ((unit-test-task))
+    file: pipelines/((language))/tasks/unit-test.yml
 
 - name: build
   serial_groups: [version]
@@ -59,7 +59,7 @@ jobs:
       params: {pre: rc}
     - get: pipelines
   - task: build
-    file: ((build-task))
+    file: pipelines/((language))/tasks/build.yml
     params:
       APP_NAME: ((app-name))
       INITIALS: ((initials))
