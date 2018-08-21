@@ -1,0 +1,94 @@
+---
+
+resources:
+
+- name: app-source
+  type: git
+  source:
+    uri: ((github-app-repo-uri))
+    branch: master
+    private_key: ((github-private-key))
+
+- name: pipelines
+  type: git
+  source:
+    uri: ((github-pipelines-repo-uri))
+    branch: master
+    private_key: ((github-private-key))
+
+- name: version
+  type: semver
+  source:
+    driver: s3
+    bucket: training-versions.rscale.io
+    region_name: us-west-2
+    key: ((initials))-((app-name))/version
+    access_key_id: ((s3-access-key))
+    secret_access_key: ((s3-secret-key))
+    initial_version: 0.0.1
+
+- name: artifact
+  type: s3
+  source:
+    regexp: ((initials))-((app-name))-(.*).*
+    bucket: training-artifacts.rscale.io
+    access_key_id: ((s3-access-key))
+    secret_access_key: ((s3-secret-key))
+    region_name: us-west-2
+
+jobs:
+
+- name: unit-test
+  serial_groups: [version]
+  plan:
+  - aggregate:
+    - get: app-source
+      trigger: true
+    - get: pipelines
+  - task: unit-test
+    file: ((unit-test-task))
+
+- name: build
+  serial_groups: [version]
+  plan:
+  - aggregate:
+    - get: app-source
+      trigger: true
+      passed: [unit-test]
+    - get: version
+      params: {pre: rc}
+    - get: pipelines
+  - task: build
+    file: ((build-task))
+    params:
+      APP_NAME: ((app-name))
+      INITIALS: ((initials))
+  - put: artifact
+    params:
+      file: build/*
+  - put: version
+    params: {file: version/version}
+
+# - name: deploy-dev
+#    serial_groups: [version]
+#   plan:
+#   - aggregate:
+#     - get: artifact
+#       passed: [build]
+#     - get: app-source
+#     - get: version
+#       passed: [build]
+#     - get: pipelines
+
+
+- name: major
+  serial_groups: [version]
+  plan:
+  - put: version
+    params: {bump: major}
+
+- name: minor
+  serial_groups: [version]
+  plan:
+  - put: version
+    params: {bump: minor}

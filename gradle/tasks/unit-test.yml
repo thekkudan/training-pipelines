@@ -1,0 +1,14 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: rscale/gradle
+
+inputs:
+- name: pipelines
+- name: app-source
+
+run:
+  path: pipelines/gradle/tasks/unit-test.sh

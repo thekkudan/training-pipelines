@@ -1,0 +1,14 @@
+app-name: # ex: roster
+initials: # your initials
+language: gradle
+
+github-app-repo-uri: # https github url of your app source  https://github.com/spgreenberg/roster.git
+
+github-pipelines-repo-uri: # https url of your training-pipelines fork.  ex: https://github.com/spgreenberg/training-pipelines.git
+
+cf-dev-api: # set to cf api endpoint
+cf-dev-org: # set to your org
+cf-dev-space: # set to your space
+cf-dev-hostname: # set to '<app-name>-<first_initial><lastname>'. ex: roster-sgreenberg
+cf-dev-domain: # set to the apps domain for your CF
+cf-dev-manifest: # set to the dev manifest path in your app repository. ex: dev-manifest.yml
