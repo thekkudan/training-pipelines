@@ -2,7 +2,7 @@ app-name: # ex: roster
 initials: # your initials
 language: gradle
 
-github-app-repo-uri: # ssh url of your app fork. git@github.com:spgreenberg/roster.git
+github-app-repo-uri: # ssh url of your app fork. ex: git@github.com:spgreenberg/roster.git
 
 github-pipelines-repo-uri: # ssh url of your training-pipelines fork.  ex: git@github.com:spgreenberg/training-pipelines.git
 
