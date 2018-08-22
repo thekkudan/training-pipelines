@@ -75,7 +75,7 @@ jobs:
           CF_HOSTNAME: ((cf-dev-hostname))
           CF_MANIFEST: ((cf-dev-manifest))
           CF_ORG: ((cf-dev-org))
-          CF_PWD: ((cf-password)
+          CF_PWD: ((cf-password))
           CF_SPACE: ((cf-dev-space))
           CF_USER: ((cf-user))
     serial_groups: 

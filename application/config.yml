@@ -11,5 +11,5 @@ cf-dev-org: rscale-training-3
 cf-dev-space: rejo
 cf-dev-hostname: roster-rthekkudan
 cf-dev-domain: cfapps.io
-cf-dev-manifest: "C:\\MyData\\CloudFoundryTraining\\roster.yml"
+cf-dev-manifest: roster.yml
 
