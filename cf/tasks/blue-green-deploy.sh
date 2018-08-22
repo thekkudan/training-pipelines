@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -e
 set -x
 
 version=`cat version/version`
@@ -42,7 +43,7 @@ echo "apps_url: shows the apps assigned to the hostname: ${apps_url}"
 
 # TO DO: Finish the jq parsing
 # Fetch the app names assigned to the hostname
-app_names=`(cf curl $apps_url | jq -r '...')`
+app_names=`(cf curl $apps_url | jq -r '.resources[].entity | .name')`
 
 for name in $app_names; do
     if [ "$name" != "$app_name" ]

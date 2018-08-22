@@ -1,94 +1,135 @@
----
-
-resources:
-
-- name: app-source
-  type: git
-  source:
-    uri: ((github-app-repo-uri))
-    branch: master
-    private_key: ((github-private-key))
-
-- name: pipelines
-  type: git
-  source:
-    uri: ((github-pipelines-repo-uri))
-    branch: master
-    private_key: ((github-private-key))
-
-- name: version
-  type: semver
-  source:
-    driver: s3
-    bucket: training-versions.rscale.io
-    region_name: us-west-2
-    key: ((initials))-((app-name))/version
-    access_key_id: ((s3-access-key))
-    secret_access_key: ((s3-secret-key))
-    initial_version: 0.0.1
-
-- name: artifact
-  type: s3
-  source:
-    regexp: ((initials))-((app-name))-(.*).*
-    bucket: training-artifacts.rscale.io
-    access_key_id: ((s3-access-key))
-    secret_access_key: ((s3-secret-key))
-    region_name: us-west-2
-
-jobs:
-
-- name: unit-test
-  serial_groups: [version]
-  plan:
-  - aggregate:
-    - get: app-source
-      trigger: true
-    - get: pipelines
-  - task: unit-test
-    file: pipelines/((language))/tasks/unit-test.yml
-
-- name: build
-  serial_groups: [version]
-  plan:
-  - aggregate:
-    - get: app-source
-      trigger: true
-      passed: [unit-test]
-    - get: version
-      params: {pre: rc}
-    - get: pipelines
-  - task: build
-    file: pipelines/((language))/tasks/build.yml
-    params:
-      APP_NAME: ((app-name))
-      INITIALS: ((initials))
-  - put: artifact
-    params:
-      file: build/*
-  - put: version
-    params: {file: version/version}
-
-# - name: deploy-dev
-#    serial_groups: [version]
-#   plan:
-#   - aggregate:
-#     - get: artifact
-#       passed: [build]
-#     - get: app-source
-#     - get: version
-#       passed: [build]
-#     - get: pipelines
-
-
-- name: major
-  serial_groups: [version]
-  plan:
-  - put: version
-    params: {bump: major}
-
-- name: minor
-  serial_groups: [version]
-  plan:
-  - put: version
-    params: {bump: minor}
+--- 
+jobs: 
+  - 
+    name: unit-test
+    plan: 
+      - 
+        aggregate: 
+          - 
+            get: app-source
+            trigger: true
+          - 
+            get: pipelines
+      - 
+        file: pipelines/((language))/tasks/unit-test.yml
+        task: unit-test
+    serial_groups: 
+      - version
+  - 
+    name: build
+    plan: 
+      - 
+        aggregate: 
+          - 
+            get: app-source
+            passed: 
+              - unit-test
+            trigger: true
+          - 
+            get: version
+            params: 
+              pre: rc
+          - 
+            get: pipelines
+      - 
+        file: pipelines/((language))/tasks/build.yml
+        params: 
+          APP_NAME: ((app-name))
+          INITIALS: ((initials))
+        task: build
+      - 
+        params: 
+          file: build/*
+        put: artifact
+      - 
+        params: 
+          file: version/version
+        put: version
+    serial_groups: 
+      - version
+  - 
+    name: deploy-dev
+    plan: 
+      - 
+        aggregate: 
+          - 
+            get: artifact
+            passed: 
+              - build
+            trigger: true
+          - 
+            get: app-source
+          - 
+            get: version
+            passed: 
+              - build
+          - 
+            get: pipelines
+      - 
+        file: pipelines/cf/tasks/blue-green-deploy.yml
+        task: blue-green-deploy
+        params: 
+          APP_NAME: ((app-name))
+          CF_API: ((cf-dev-api))
+          CF_DOMAIN: ((cf-dev-domain))
+          CF_HOSTNAME: ((cf-dev-hostname))
+          CF_MANIFEST: ((cf-dev-manifest))
+          CF_ORG: ((cf-dev-org))
+          CF_PWD: ((cf-password)
+          CF_SPACE: ((cf-dev-space))
+          CF_USER: ((cf-user))
+    serial_groups: 
+      - version
+  - 
+    name: major
+    plan: 
+      - 
+        params: 
+          bump: major
+        put: version
+    serial_groups: 
+      - version
+  - 
+    name: minor
+    plan: 
+      - 
+        params: 
+          bump: minor
+        put: version
+    serial_groups: 
+      - version
+resources: 
+  - 
+    name: app-source
+    source: 
+      branch: master
+      private_key: ((github-private-key))
+      uri: ((github-app-repo-uri))
+    type: git
+  - 
+    name: pipelines
+    source: 
+      branch: master
+      private_key: ((github-private-key))
+      uri: ((github-pipelines-repo-uri))
+    type: git
+  - 
+    name: version
+    source: 
+      access_key_id: ((s3-access-key))
+      bucket: training-versions.rscale.io
+      driver: s3
+      initial_version: "0.0.1"
+      key: ((initials))-((app-name))/version
+      region_name: us-west-2
+      secret_access_key: ((s3-secret-key))
+    type: semver
+  - 
+    name: artifact
+    source: 
+      access_key_id: ((s3-access-key))
+      bucket: training-artifacts.rscale.io
+      regexp: ((initials))-((app-name))-(.*).*
+      region_name: us-west-2
+      secret_access_key: ((s3-secret-key))
+    type: s3

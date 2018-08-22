@@ -1,14 +1,15 @@
-app-name: # ex: roster
-initials: # your initials
+app-name: roster
+initials: ojer
 language: gradle
 
-github-app-repo-uri: # ssh url of your app fork in double quotes. ex: "git@github.com:spgreenberg/roster.git"
+github-app-repo-uri: "git@github.com:thekkudan/roster.git"
 
-github-pipelines-repo-uri: # ssh url of your training-pipelines fork in double quotes.  ex: "git@github.com:spgreenberg/training-pipelines.git"
+github-pipelines-repo-uri: "git@github.com:thekkudan/training-pipelines.git"
 
-cf-dev-api: # set to cf api endpoint
-cf-dev-org: # set to your org
-cf-dev-space: # set to your space
-cf-dev-hostname: # set to '<app-name>-<first_initial><lastname>'. ex: roster-sgreenberg
-cf-dev-domain: # set to the apps domain for your CF
-cf-dev-manifest: # set to the dev manifest path in your app repository. ex: dev-manifest.yml
+cf-dev-api: api.run.pivotal.io
+cf-dev-org: rscale-training-3
+cf-dev-space: rejo
+cf-dev-hostname: roster-rthekkudan
+cf-dev-domain: cfapps.io
+cf-dev-manifest: "C:\\MyData\\CloudFoundryTraining\\roster.yml"
+
